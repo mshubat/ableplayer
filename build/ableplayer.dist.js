@@ -5985,31 +5985,33 @@ if (thisObj.useTtml && (trackSrc.endsWith('.xml') || trackText.startsWith('<?xml
 					// Note: Unlike YouTube Data API, the IFrame Player API only returns 
 					// tracks that are published, and does NOT include ASR captions 
 					// So, no additional filtering is required 
-					for (i=0; i < ytTracks.length; i++) {
-						trackLang = ytTracks[i].languageCode; 
-						trackLabel = ytTracks[i].languageName; // displayName and languageName seem to always have the same value
-						isDefaultTrack = false; 
-						if (typeof thisObj.captionLang !== 'undefined') { 
-							if (trackLang === thisObj.captionLang) {
-								isDefaultTrack = true;						
+					if (ytTracks && ytTracks) {
+						for (i=0; i < ytTracks.length; i++) {
+							trackLang = ytTracks[i].languageCode; 
+							trackLabel = ytTracks[i].languageName; // displayName and languageName seem to always have the same value
+							isDefaultTrack = false; 
+							if (typeof thisObj.captionLang !== 'undefined') { 
+								if (trackLang === thisObj.captionLang) {
+									isDefaultTrack = true;						
+								}
 							}
-						}
-						else if (typeof thisObj.lang !== 'undefined') { 
-							if (trackLang === thisObj.lang) {
-								isDefaultTrack = true;						
+							else if (typeof thisObj.lang !== 'undefined') { 
+								if (trackLang === thisObj.lang) {
+									isDefaultTrack = true;						
+								}
 							}
+							thisObj.tracks.push({
+								'kind': 'captions',
+								'language': trackLang,
+								'label': trackLabel,
+								'def': isDefaultTrack
+							});
 						}
-						thisObj.tracks.push({
-							'kind': 'captions',
-							'language': trackLang,
-							'label': trackLabel,
-							'def': isDefaultTrack
-						});
+						thisObj.captions = thisObj.tracks; 
+						thisObj.hasCaptions = true;
+						// setupPopups again with new captions array, replacing original
+						thisObj.setupPopups('captions');				
 					}
-					thisObj.captions = thisObj.tracks; 
-					thisObj.hasCaptions = true;
-					// setupPopups again with new captions array, replacing original
-					thisObj.setupPopups('captions');				
 					thisObj.loadingYouTubeCaptions = false; 
 				}
 				if (thisObj.captionLangPending) { 
