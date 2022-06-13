@@ -16067,6 +16067,9 @@ if (thisObj.useTtml && (trackSrc.endsWith('.xml') || trackText.startsWith('<?xml
 
 		this.vimeoPlayer.ready().then(function() {
 
+			// add tabindex -1 on iframe so vimeo frame cannot be focused on
+			$('#'+containerId).children('iframe').attr('tabindex', -1);
+
 			if (!thisObj.hasPlaylist) {
 				// remove the media element, since Vimeo replaces that with its own element in an iframe
 				// this is handled differently for playlists. See buildplayer.js > cuePlaylistItem()
