@@ -84,6 +84,7 @@
 		this.$bigPlayButton = $('<button>', {
 			'class': 'able-big-play-button',
 			'aria-hidden': false,
+			'aria-label': this.tt.play,
 			'tabindex': 0
 		});
 
