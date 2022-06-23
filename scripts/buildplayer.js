@@ -61,7 +61,59 @@
 		// Do this last, as it should be prepended to the top of this.$ableDiv
 		// after everything else has prepended
 		this.injectOffscreenHeading();
+
+		if (thisObj.embeddedInIframe && thisObj.player === 'vimeo') {
+
+
+			// hide controls untill user interacts with iframe
+			var intervalId = setInterval(function() {
+				console.log('Checking user focus...')
+			
+				thisObj.$bigPlayButton.attr({
+					'tabindex': '-1',
+				}).css('pointer-events','none');
+
+
+
+				thisObj.$playerDiv.attr({
+					'aria-hidden': 'true'
+				}).css('display', 'none');
+				
+				if (thisObj.userDidFocusOnVimeoIframe()) {
+					// play video
+					thisObj.playMedia();
+					
+					console.log('USER DID FOCUS')
+					clearInterval(intervalId);
+
+					thisObj.$bigPlayButton.attr({
+						'tabindex': '0',
+					}).css('pointer-events','all');;
+
+					thisObj.$playerDiv.attr({
+						'aria-hidden': 'false'
+					}).css('display', 'block');
+				}
+
+			}, 500);
+
+
+		}
 	};
+
+	AblePlayer.prototype.userDidFocusOnVimeoIframe = function() {
+		
+		var containerId = this.mediaId + '_vimeo';
+		var activeElement = AblePlayer.getActiveDOMElement();
+		var vimeoIframe = $('#'+containerId).children('iframe')[0];
+		
+		console.log('activeElement found: ', activeElement);
+		console.log('activeElement.tagName: ', activeElement.tagName);
+		console.log('vimeoIframe is: ', vimeoIframe);
+
+		// user interacted with iframe.
+		return (activeElement && activeElement.tagName === 'IFRAME' && activeElement.getAttribute('src') === vimeoIframe.getAttribute('src'));
+	}
 
 	AblePlayer.prototype.injectOffscreenHeading = function () {
 
@@ -86,7 +138,6 @@
 	};
 
 	AblePlayer.prototype.injectBigPlayButton = function () {
-
 		this.$bigPlayButton = $('<button>', {
 			'class': 'able-big-play-button',
 			'aria-hidden': false,

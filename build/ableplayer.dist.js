@@ -112,6 +112,19 @@ var AblePlayerInstances = [];
 			this.playsInline = '0';
 		}
 
+		// embedded-in-iframe (Boolean, indicating whether able player is embedded in an iframe)
+		// Indicates if the player is on a page which itself is embedded in an iframe.
+		// If so the controls will only be added after the user interacts with the video frame.
+		// in this sense the iframe will act as the play button. This is to get around chromium
+		// browsers blocking "autoplay" of videos when user has not yet interacted with the iframe
+		// containing the video.
+		this.userInteractedWithVideoFrame = false;
+		if ($(media).attr('embedded-in-iframe') !== undefined) {
+			this.embeddedInIframe = true;
+		} else {
+			this.embeddedInIframe = false;
+		}
+
 		// poster (Boolean, indicating whether media element has a poster attribute)
 		if ($(media).attr('poster')) {
 			this.hasPoster = true;
@@ -3486,7 +3499,54 @@ var AblePlayerInstances = [];
 		// Do this last, as it should be prepended to the top of this.$ableDiv
 		// after everything else has prepended
 		this.injectOffscreenHeading();
+
+		if (thisObj.embeddedInIframe && thisObj.player === 'vimeo') {
+
+
+			// hide controls untill user interacts with iframe
+			var intervalId = setInterval(function() {
+				
+
+
+
+				thisObj.$playerDiv.attr({
+					'aria-hidden': 'true'
+				}).css('display', 'none');
+				
+				if (thisObj.userDidFocusOnVimeoIframe()) {
+					// play video
+					thisObj.playMedia();
+					
+					
+
+					thisObj.$bigPlayButton.attr({
+						'tabindex': '0',
+					}).css('pointer-events','all');;
+
+					thisObj.$playerDiv.attr({
+						'aria-hidden': 'false'
+					}).css('display', 'block');
+				}
+
+			}, 500);
+
+
+		}
 	};
+
+	AblePlayer.prototype.userDidFocusOnVimeoIframe = function() {
+		
+		var containerId = this.mediaId + '_vimeo';
+		var activeElement = AblePlayer.getActiveDOMElement();
+		var vimeoIframe = $('#'+containerId).children('iframe')[0];
+		
+		
+		
+		
+
+		// user interacted with iframe.
+		return (activeElement && activeElement.tagName === 'IFRAME' && activeElement.getAttribute('src') === vimeoIframe.getAttribute('src'));
+	}
 
 	AblePlayer.prototype.injectOffscreenHeading = function () {
 
@@ -3511,7 +3571,6 @@ var AblePlayerInstances = [];
 	};
 
 	AblePlayer.prototype.injectBigPlayButton = function () {
-
 		this.$bigPlayButton = $('<button>', {
 			'class': 'able-big-play-button',
 			'aria-hidden': false,

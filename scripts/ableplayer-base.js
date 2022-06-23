@@ -112,6 +112,19 @@ var AblePlayerInstances = [];
 			this.playsInline = '0';
 		}
 
+		// embedded-in-iframe (Boolean, indicating whether able player is embedded in an iframe)
+		// Indicates if the player is on a page which itself is embedded in an iframe.
+		// If so the controls will only be added after the user interacts with the video frame.
+		// in this sense the iframe will act as the play button. This is to get around chromium
+		// browsers blocking "autoplay" of videos when user has not yet interacted with the iframe
+		// containing the video.
+		this.userInteractedWithVideoFrame = false;
+		if ($(media).attr('embedded-in-iframe') !== undefined) {
+			this.embeddedInIframe = true;
+		} else {
+			this.embeddedInIframe = false;
+		}
+
 		// poster (Boolean, indicating whether media element has a poster attribute)
 		if ($(media).attr('poster')) {
 			this.hasPoster = true;
