@@ -1173,8 +1173,8 @@
 				if (this.captionsPopup) {
 					this.captionsPopup.show();
 					this.$ccButton.attr('aria-expanded','true');
-					this.$ccButton.focus();
-					// Gives time to focus on expanded ccButton
+
+					// Gives time to "register" expanded ccButton
 					setTimeout(function() {
 						thisObj.captionsPopup.css('top', thisObj.$ccButton.position().top - thisObj.captionsPopup.outerHeight());
 						thisObj.captionsPopup.css('left', thisObj.$ccButton.position().left)

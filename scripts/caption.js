@@ -98,13 +98,14 @@
 			// immediately after closing it (used in handleCaptionToggle())
 			thisObj.hidingPopup = true;
 			thisObj.captionsPopup.hide();
+			thisObj.$ccButton.attr('aria-expanded', 'false');
 			// Ensure stopgap gets cancelled if handleCaptionToggle() isn't called
 			// e.g., if user triggered button with Enter or mouse click, not spacebar
 			setTimeout(function() {
 				thisObj.hidingPopup = false;
 			}, 100);
 			thisObj.updateCaptionsMenu(thisObj.captionLang);
-			thisObj.$ccButton.focus();
+			thisObj.waitThenFocus(thisObj.$ccButton);
 
 			// save preference to cookie
 			thisObj.prefCaptions = 1;
@@ -129,13 +130,14 @@
 			// immediately after closing it (used in handleCaptionToggle())
 			thisObj.hidingPopup = true;
 			thisObj.captionsPopup.hide();
+			thisObj.$ccButton.attr('aria-expanded', 'false');
 			// Ensure stopgap gets cancelled if handleCaptionToggle() isn't called
 			// e.g., if user triggered button with Enter or mouse click, not spacebar
 			setTimeout(function() {
 				thisObj.hidingPopup = false;
 			}, 100);
 			thisObj.updateCaptionsMenu();
-			thisObj.$ccButton.focus();
+			thisObj.waitThenFocus(thisObj.$ccButton);
 
 			// save preference to cookie
 			thisObj.prefCaptions = 0;
